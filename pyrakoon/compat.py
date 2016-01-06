@@ -932,7 +932,9 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
                     connection = self._send_to_master(bytes_)
                     return utils.read_blocking(message.receive(),
                         connection.read)
-                except (errors.NotMaster, ArakoonNoMaster):
+                except (errors.NotMaster,
+                        ArakoonNoMaster,
+                        ArakoonSockReadNoBytes):
                     self.master_id = None
                     self.drop_connections()
 
