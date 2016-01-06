@@ -908,7 +908,7 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
 
         self._lock = threading.RLock()
         self._connections = dict()
-        self._timetout = timeout
+        self._timeout = timeout
 
     @property
     def connected(self):
