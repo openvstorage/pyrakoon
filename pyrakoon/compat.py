@@ -1071,7 +1071,7 @@ class _ClientConnection(object):
         self._connected = False
         self._socket = None
         self._cluster_id = cluster_id
-        if (isinstance(timeout, int) and timeout > 0) or timeout is None:
+        if (isinstance(timeout, (int, float)) and timeout > 0) or timeout is None:
             self._timeout = timeout
         else:
             self._timeout = ArakoonClientConfig.getConnectionTimeout()
