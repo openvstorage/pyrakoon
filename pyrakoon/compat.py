@@ -508,8 +508,9 @@ class ArakoonClient(object):
         """
 
         try:
-            return self._client.expect_progress_possible()
-        except ArakoonNoMaster:
+            message = protocol.ExpectProgressPossible()
+            return self._client._process(message, retry = False)
+        except ArakoonException:
             return False
 
     @utils.update_argspec('self')
@@ -1077,7 +1078,8 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
     def connected(self):
         return True
 
-    def _process(self, message, node_id = None):
+    def _process(self, message, node_id = None, retry = True):
+        
         bytes_ = ''.join(message.serialize())
 
         self._lock.acquire()
@@ -1086,11 +1088,9 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
             start = time.time()
             tryCount = 0.0
             backoffPeriod = 0.2
-            callSucceeded = False
             retryPeriod = ArakoonClientConfig.getNoMasterRetryPeriod()
             deadline = start + retryPeriod
-
-            while not callSucceeded and time.time() < deadline:
+            while True:
                 try:
                     # Send on wire
                     if node_id is None:
@@ -1104,17 +1104,16 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
                         ArakoonSockReadNoBytes):
                     self.master_id = None
                     self.drop_connections()
-
+                    
                     sleepPeriod = backoffPeriod * tryCount
-                    if time.time() + sleepPeriod > deadline:
-                        raise
-
-                    tryCount += 1.0
-                    LOGGER.warning(
-                        'Master not found, retrying in %0.2f seconds' % \
+                    if retry and time.time() + sleepPeriod <= deadline:
+                        tryCount += 1.0
+                        LOGGER.warning(
+                            'Master not found, retrying in %0.2f seconds' % \
                             sleepPeriod)
-
-                    time.sleep(sleepPeriod)
+                        time.sleep(sleepPeriod)
+                    else:
+                        raise
 
         finally:
             self._lock.release()
