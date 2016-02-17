@@ -1369,6 +1369,7 @@ class _ClientConnection(object):
 
         return ''.join(result)
 
+from protocol import admin
 class ArakoonAdmin(ArakoonClient):
 
     @utils.update_argspec('self', 'node_id', 'n')
@@ -1384,11 +1385,11 @@ class ArakoonAdmin(ArakoonClient):
         @type n : int
         @param node_id : id of targeted node
         """
-        message = CollapseTlogs(n)
-        x = self._timeout
+        message = admin.CollapseTlogs(n)
+        x = self._client._timeout
         try:
-            self._timeout = None # Don't timeout on this call
+            self._client._timeout = None # Don't timeout on this call
             self._client._process(message, node_id = node_id)
         finally:
-            self._timeout = x
+            self._client._timeout = x
 
