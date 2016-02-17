@@ -1367,3 +1367,22 @@ class _ClientConnection(object):
                 raise ArakoonSockNotReadable
 
         return ''.join(result)
+
+class ArakoonAdmin(ArakoonClient):
+
+    @utils.update_argspec('self', 'node_id', 'n')
+    @_convert_exceptions
+    @_validate_signature('string', 'int')
+    def collapse(self, node_id, n):
+
+        """
+        Tell the targeted node to collapse tlogs into a head database
+        Will return the server node identifier and the version of arakoon it is running
+
+        @type node_id  : string
+        @type n : int
+        @param node_id : id of targeted node
+        """
+        message = CollapseTlogs(n)
+        self._client._process(message, node_id = node_id)
+
