@@ -1384,5 +1384,10 @@ class ArakoonAdmin(ArakoonClient):
         @param node_id : id of targeted node
         """
         message = CollapseTlogs(n)
-        self._client._process(message, node_id = node_id)
+        x = self._timeout
+        try:
+            self._timeout = None # Don't timeout on this call
+            self._client._process(message, node_id = node_id)
+        finally:
+            self._timeout = x
 
