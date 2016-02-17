@@ -1101,6 +1101,7 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
                         connection.read)
                 except (errors.NotMaster,
                         ArakoonNoMaster,
+                        ArakoonNotConnected,
                         ArakoonSockReadNoBytes):
                     self.master_id = None
                     self.drop_connections()
