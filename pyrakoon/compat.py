@@ -1258,7 +1258,6 @@ class _ClientConnection(object):
 
         try:
             self._socket = socket.create_connection(self._address, self._timeout)
-            self._socket.setblocking(False)
 
             after_idle_sec = 20
             interval_sec = 20
