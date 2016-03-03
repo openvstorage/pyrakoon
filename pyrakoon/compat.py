@@ -1137,9 +1137,9 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
 
                 result = connection
                 break
-            except Exception:
-                LOGGER.exception('Message exchange with node %s failed',
-                    node_id)
+            except Exception as e:
+                LOGGER.exception('%s : Message exchange with node %s failed',
+                                 e, node_id)
                 try:
                     self._connections.pop(node_id).close()
                 finally:
@@ -1185,14 +1185,14 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
                                 LOGGER.warning(
                                     'Node "%s" thinks the master is "%s", but actually it isn\'t',
                                     node, tmp_master)
-                    except Exception:
+                    except Exception as e:
                         LOGGER.exception(
-                            'Unable to validate master on node %s', tmp_master)
+                            '%s: Unable to validate master on node %s', e, tmp_master)
                         self.master_id = None
 
-                except Exception:
+                except Exception as e:
                     LOGGER.exception(
-                        'Unable to query node "%s" to look up master', node)
+                        '%s: Unable to query node "%s" to look up master',e, node)
 
         if not self.master_id:
             LOGGER.error('Unable to determine master node')
@@ -1290,8 +1290,8 @@ class _ClientConnection(object):
             self._socket.sendall(data)
 
             self._connected = True
-        except Exception:
-            LOGGER.exception('Unable to connect to %s', self._address)
+        except Exception as e:
+            LOGGER.exception('%s: Unable to connect to %s', e, self._address)
 
     def send(self, data):
         if not self._connected:
@@ -1302,8 +1302,8 @@ class _ClientConnection(object):
 
         try:
             self._socket.sendall(data)
-        except Exception:
-            LOGGER.exception('Error while sending data to %s', self._address)
+        except Exception as e:
+            LOGGER.exception('%s:Error while sending data to %s', e, self._address)
             self.close()
             raise ArakoonSockSendError
 
@@ -1311,9 +1311,10 @@ class _ClientConnection(object):
         if self._connected and self._socket:
             try:
                 self._socket.close()
-            except Exception:
-                LOGGER.exception('Error while closing socket to %s',
-                    self._address)
+            except Exception as e:
+                LOGGER.exception('%s: Error while closing socket to %s',
+                                 e,
+                                 self._address)
             finally:
                 self._connected = False
 
@@ -1337,8 +1338,8 @@ class _ClientConnection(object):
             if self._socket in reads:
                 try:
                     data = self._socket.recv(bytes_remaining)
-                except Exception:
-                    LOGGER.exception('Error while reading socket')
+                except Exception as e:
+                    LOGGER.exception('%s: Error while reading socket', e)
                     self._connected = False
 
                     raise ArakoonSockRecvError
@@ -1346,8 +1347,8 @@ class _ClientConnection(object):
                 if len(data) == 0:
                     try:
                         self.close()
-                    except Exception:
-                        LOGGER.exception('Error while closing socket')
+                    except Exception as e:
+                        LOGGER.exception('%s: Error while closing socket', e)
 
                     self._connected = False
 
@@ -1359,8 +1360,8 @@ class _ClientConnection(object):
             else:
                 try:
                     self.close()
-                except Exception:
-                    LOGGER.exception('Error while closing socket')
+                except Exception as e:
+                    LOGGER.exception('%s: Error while closing socket', e)
                 finally:
                     self._connnected = False
 
