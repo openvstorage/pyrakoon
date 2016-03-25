@@ -852,7 +852,8 @@ def _convert_exception(exc):
         return exc_
     elif isinstance(exc, errors.ReadOnly):
         exc_ = ArakoonException(exc.message)
-        exc_.inner = ecv
+        exc_.inner = exc
+        return exc_
     else:
         return exc
 
