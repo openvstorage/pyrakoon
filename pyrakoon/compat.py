@@ -16,6 +16,7 @@
 
 '''Compatibility layer for the original Arakoon Python client'''
 
+import os
 import time
 import random
 import select
