@@ -173,7 +173,7 @@ def _convert_exceptions(fun):
     
 
 class ArakoonClient(object):
-    def __init__(self, config):
+    def __init__(self, config, timeout=0, noMasterTimeout=0):
         """
         Constructor of an Arakoon client object.
 
@@ -186,7 +186,7 @@ class ArakoonClient(object):
             case a default L{ArakoonClientConfig} object will be created.
         """
 
-        self._client = _ArakoonClient(config)
+        self._client = _ArakoonClient(config, timeout, noMasterTimeout)
 
         # Keep a reference, for compatibility reasons
         self._config = config
@@ -1083,13 +1083,17 @@ class ArakoonClientConfig :
 
 # Actual client implementation
 class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
-    def __init__(self, config, timeout=0):
+    def __init__(self, config, timeout=0, noMasterTimeout=0):
         self._config = config
         self.master_id = None
 
         self._lock = threading.RLock()
         self._connections = dict()
         self._timeout = timeout
+        if (isinstance(timeout, (int, float)) and timeout > 0) or timeout is None:
+            self._master_timeout = noMasterTimeout
+        else:
+            self._master_timeout = ArakoonClientConfig.getNoMasterRetryPeriod()
 
     @property
     def connected(self):
@@ -1105,8 +1109,7 @@ class _ArakoonClient(object, client.AbstractClient, client.ClientMixin):
             start = time.time()
             tryCount = 0.0
             backoffPeriod = 0.2
-            retryPeriod = ArakoonClientConfig.getNoMasterRetryPeriod()
-            deadline = start + retryPeriod
+            deadline = start + self._master_timeout
             while True:
                 try:
                     # Send on wire
