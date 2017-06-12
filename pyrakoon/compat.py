@@ -181,9 +181,13 @@ class ArakoonClient(object):
         This parameter contains info on the arakoon server nodes.
         See the constructor of L{ArakoonClientConfig} for more details.
 
-        @type config: L{ArakoonClientConfig}
         @param config: The L{ArakoonClientConfig} object to be used by the client. Defaults to None in which
-            case a default L{ArakoonClientConfig} object will be created.
+        case a default L{ArakoonClientConfig} object will be created.
+        @type config: L{ArakoonClientConfig}
+        @param timeout: tcp connection timeout
+        @type timeout: int or float
+        @param noMasterTimeout: period (in seconds) messages to the master should be retried when a master re-election occurs
+        @type noMasterTimeout: int or float
         """
 
         self._client = _ArakoonClient(config, timeout, noMasterTimeout)
