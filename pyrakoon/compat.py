@@ -814,6 +814,9 @@ class ArakoonAssertionFailed(ArakoonException):
     _msg = 'Assert did not yield expected result'
 
 
+class ArakoonBadInput(ArakoonException):
+    _msg = "Bad input for arakoon operation"
+
 def _convert_exception(exc):
     """
     Convert an exception to a suitable `ArakoonException`
