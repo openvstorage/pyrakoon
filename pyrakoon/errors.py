@@ -84,6 +84,11 @@ class NoLongerMaster(ArakoonError):
 
     CODE = 0x0021
 
+class BadInput(ArakoonError):
+    '''Bad input'''
+
+    CODE = 0x0026
+
 class InconsistentRead(ArakoonError):
     '''Inconsistent read'''
 
