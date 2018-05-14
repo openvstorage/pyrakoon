@@ -848,6 +848,10 @@ def _convert_exception(exc):
         exc_ = ArakoonAssertionFailed(exc.message)
         exc_.inner = exc
         return exc_
+    elif isinstance(exc, errors.BadInput):
+        exc_ = ArakoonBadInput(exc.message)
+        exc_.inner = exc
+        return exc_
     elif isinstance(exc, errors.ArakoonError):
         exc_ = ArakoonException(exc.message)
         exc_.inner = exc
