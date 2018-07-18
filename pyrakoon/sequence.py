@@ -95,6 +95,24 @@ class Delete(Step):
             :type: :class:`str`
         '''))
 
+class DeletePrefix(Step):
+    '''"DeletePrefix" operation'''
+
+    TAG = 14
+    ARGS = ('prefix', protocol.STRING),
+
+    def __init__(self, prefix):
+        super(DeletePrefix, self).__init__(prefix)
+
+        self._prefix = prefix
+
+    prefix = property(operator.attrgetter('_prefix'),
+        doc=utils.format_doc('''
+            prefix to delete
+
+            :type: :class:`str`
+        '''))
+
 class Assert(Step):
     '''"Assert" operation'''
 

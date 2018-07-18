@@ -310,6 +310,9 @@ class ArakoonClient(object):
         def convert_assert(step):
             return sequence.Assert(step._key, step._value)
 
+        def convert_delete_prefix(step):
+            return sequence.DeletePrefix(step._prefix)
+
         def convert_assert_exists(step):
             return sequence.AssertExists(step._key)
 
@@ -324,6 +327,8 @@ class ArakoonClient(object):
                     steps.append(convert_set(step))
                 elif isinstance(step, Delete):
                     steps.append(convert_delete(step))
+                elif isinstance(step, DeletePrefix):
+                    steps.append(convert_delete_prefix(step))
                 elif isinstance(step, Assert):
                     steps.append(convert_assert(step))
                 elif isinstance(step, AssertExists):
@@ -891,6 +896,9 @@ class Delete(Update):
     def __init__(self, key):
         self._key = key
 
+class DeletePrefix(Update):
+    def __init__(self, prefix):
+        self._prefix = prefix
 
 class Assert(Update):
     def __init__(self, key, value):
@@ -920,6 +928,11 @@ class Sequence(Update):
     @_validate_signature('string', 'string')
     def addSet(self, key, value):
         self._updates.append(Set(key, value))
+
+    @utils.update_argspec('self', 'prefix', )
+    @_validate_signature('string')
+    def addDeletePrefix(self, prefix):
+        self._updates.append(DeletePrefix(prefix))
 
     @utils.update_argspec('self', 'key')
     @_validate_signature('string')
