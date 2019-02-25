@@ -17,11 +17,12 @@
 '''Utility functions for building client mixins'''
 
 import functools
-
 from pyrakoon import protocol, utils
 
+
 def validate_types(specs, args):
-    '''Validate method call argument types
+    """
+    Validate method call argument types
 
     :param specs: Spec of expected types
     :type specs: iterable of `(str, pyrakoon.protocol.Type)`
@@ -30,7 +31,7 @@ def validate_types(specs, args):
 
     :raise TypeError: Type of an argument is invalid
     :raise ValueError: Value of an argument is invalid
-    '''
+    """
 
     for spec, arg in zip(specs, args):
         name, type_ = spec[:2]
@@ -44,7 +45,8 @@ def validate_types(specs, args):
 
 
 def call(message_type):
-    '''Expose a :class:`~pyrakoon.protocol.Message` as a method on a client
+    """
+    Expose a :class:`~pyrakoon.protocol.Message` as a method on a client
 
     :note: If the client method has a `consistency` option (i.e.
         :data:`pyrakoon.protocol.CONSISTENCY_ARG` is present in the :attr:`ARGS`
@@ -57,10 +59,12 @@ def call(message_type):
     :return: Method which wraps a call to an Arakoon server using given message
         type
     :rtype: `callable`
-    '''
+    """
 
     def wrapper(fun):
-        '''Decorator helper'''
+        """
+        Decorator helper
+        """
 
         has_consistency = False
 
@@ -82,9 +86,9 @@ def call(message_type):
             name, _, default = protocol.CONSISTENCY_ARG
             argspec.append((name, default))
 
-        @utils.update_argspec(*argspec) #pylint: disable=W0142
+        @utils.update_argspec(*argspec)
         @functools.wraps(fun)
-        def wrapped(**kwargs): #pylint: disable=C0111
+        def wrapped(**kwargs):
             self = kwargs['self']
 
             if not self.connected:
@@ -94,11 +98,11 @@ def call(message_type):
             args = tuple(kwargs[arg[0]] for arg in message_type.ARGS)
             validate_types(message_type.ARGS, args)
 
-            message = message_type(*args) #pylint: disable=W0142
+            message = message_type(*args)
 
-            return self._process(message) #pylint: disable=W0212
+            return self._process(message)
 
-        wrapped.__doc__ = message_type.DOC #pylint: disable=W0622
+        wrapped.__doc__ = message_type.DOC
 
         return wrapped
 
