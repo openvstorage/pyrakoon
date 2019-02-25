@@ -108,11 +108,11 @@ class String(Type):
 
     def receive(self):
         length_receiver = UINT32.receive()
-        request = length_receiver.next() #pylint: disable=E1101
+        request = length_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            request = length_receiver.send(value) #pylint: disable=E1101
+            request = length_receiver.send(value)
 
         if not isinstance(request, Result):
             raise TypeError
@@ -145,8 +145,8 @@ class UnsignedInteger(Type):
 
         super(UnsignedInteger, self).__init__()
 
-        self.MAX_INT = (2 ** bits) - 1 #pylint: disable=C0103
-        self.PACKER = struct.Struct(pack) #pylint: disable=C0103
+        self.MAX_INT = (2 ** bits) - 1
+        self.PACKER = struct.Struct(pack)
 
     def check(self, value):
         if not isinstance(value, (int, long)):
@@ -176,8 +176,8 @@ class SignedInteger(Type):
 
         super(SignedInteger, self).__init__()
 
-        self.MAX_INT = ((2 ** bits) / 2) - 1 #pylint: disable=C0103
-        self.PACKER = struct.Struct(pack) #pylint: disable=C0103
+        self.MAX_INT = ((2 ** bits) / 2) - 1
+        self.PACKER = struct.Struct(pack)
 
     def check(self, value):
         if not isinstance(value, (int, long)):
@@ -197,7 +197,6 @@ class Float(Type):
     def check(self, value):
         if not isinstance(value, float):
             raise TypeError
-
 
 
 class Bool(Type):
@@ -222,11 +221,11 @@ class Bool(Type):
 
     def receive(self):
         value_receiver = super(Bool, self).receive()
-        request = value_receiver.next() #pylint: disable=E1101
+        request = value_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            request = value_receiver.send(value) #pylint: disable=E1101
+            request = value_receiver.send(value)
 
         if not isinstance(request, Result):
             raise TypeError
@@ -241,8 +240,7 @@ class Bool(Type):
             raise ValueError('Unexpected bool value "0x%02x"' % ord(value))
 
 
-
-class Unit(Type): #pylint: disable=R0921
+class Unit(Type):
     """
     Unit type
     """
@@ -312,11 +310,11 @@ class Option(Type):
 
     def receive(self):
         has_value_receiver = BOOL.receive()
-        request = has_value_receiver.next() #pylint: disable=E1101
+        request = has_value_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            request = has_value_receiver.send(value) #pylint: disable=E1101
+            request = has_value_receiver.send(value)
 
         if not isinstance(request, Result):
             raise TypeError
@@ -327,11 +325,11 @@ class Option(Type):
             yield Result(None)
         else:
             receiver = self._inner_type.receive()
-            request = receiver.next() #pylint: disable=E1101
+            request = receiver.next()
 
             while isinstance(request, Request):
                 value = yield request
-                request = receiver.send(value) #pylint: disable=E1101
+                request = receiver.send(value)
 
             if not isinstance(request, Result):
                 raise TypeError
@@ -370,11 +368,11 @@ class List(Type):
 
     def receive(self):
         count_receiver = UINT32.receive()
-        request = count_receiver.next() #pylint: disable=E1101
+        request = count_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            request = count_receiver.send(value) #pylint: disable=E1101
+            request = count_receiver.send(value)
 
         if not isinstance(request, Result):
             raise TypeError
@@ -384,11 +382,11 @@ class List(Type):
         values = [None] * count
         for idx in xrange(count - 1, -1, -1):
             receiver = self._inner_type.receive()
-            request = receiver.next() #pylint: disable=E1101
+            request = receiver.next()
 
             while isinstance(request, Request):
                 value = yield request
-                request = receiver.send(value) #pylint: disable=E1101
+                request = receiver.send(value)
 
             if not isinstance(request, Result):
                 raise TypeError
@@ -400,6 +398,7 @@ class List(Type):
             values[idx] = value
 
         yield Result(values)
+
 
 class Array(Type):
     """
@@ -419,11 +418,11 @@ class Array(Type):
 
     def receive(self):
         count_receiver = UINT32.receive()
-        request = count_receiver.next() #pylint: disable=E1101
+        request = count_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            request = count_receiver.send(value) #pylint: disable=E1101
+            request = count_receiver.send(value)
 
         if not isinstance(request, Result):
             raise TypeError
@@ -433,11 +432,11 @@ class Array(Type):
         values = [None] * count
         for idx in xrange(0, count):
             receiver = self._inner_type.receive()
-            request = receiver.next() #pylint: disable=E1101
+            request = receiver.next()
 
             while isinstance(request, Request):
                 value = yield request
-                request = receiver.send(value) #pylint: disable=E1101
+                request = receiver.send(value)
 
             if not isinstance(request, Result):
                 raise TypeError
@@ -486,11 +485,11 @@ class Product(Type):
 
         for type_ in self._inner_types:
             receiver = type_.receive()
-            request = receiver.next() #pylint: disable=E1101
+            request = receiver.next()
 
             while isinstance(request, Request):
                 value = yield request
-                request = receiver.send(value) #pylint: disable=E1101
+                request = receiver.send(value)
 
             if not isinstance(request, Result):
                 raise TypeError
@@ -499,6 +498,7 @@ class Product(Type):
             values.append(value)
 
         yield Result(tuple(values))
+
 
 class NamedField(Type):
     """
@@ -520,11 +520,10 @@ class NamedField(Type):
     @classmethod
     def receive(cls):
         type_receiver = INT32.receive()
-        request = type_receiver.next() #pylint: disable=E1101
+        request = type_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            #pylint: disable=E1101
             request = type_receiver.send(value)
 
         if not isinstance(request, Result):
@@ -533,11 +532,10 @@ class NamedField(Type):
         type_ = request.value
 
         name_receiver = STRING.receive()
-        request = name_receiver.next() #pylint: disable=E1101
+        request = name_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            #pylint: disable=E1101
             request = name_receiver.send(value)
 
         if not isinstance(request, Result):
@@ -558,11 +556,10 @@ class NamedField(Type):
         else:
             raise ValueError('Unknown named field type %d' % type_)
 
-        request = value_receiver.next() #pylint: disable=E1103
+        request = value_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            #pylint: disable=E1103
             request = value_receiver.send(value)
 
         if not isinstance(request, Result):
@@ -572,16 +569,16 @@ class NamedField(Type):
 
         if type_ == cls.FIELD_TYPE_LIST:
             result = dict()
-            map(result.update, value) #pylint: disable=W0141
+            map(result.update, value)
             value = result
 
         yield Result({name: value})
 
 
-
 class StatisticsType(Type):
-    """Statistics type"""
-
+    """
+    Statistics type
+    """
 
     def check(self, value):
         raise NotImplementedError('Statistics can\'t be checked')
@@ -591,11 +588,11 @@ class StatisticsType(Type):
 
     def receive(self):
         buffer_receiver = STRING.receive()
-        request = buffer_receiver.next() #pylint: disable=E1101
+        request = buffer_receiver.next()
 
         while isinstance(request, Request):
             value = yield request
-            request = buffer_receiver.send(value) #pylint: disable=E1101
+            request = buffer_receiver.send(value)
 
         if not isinstance(request, Result):
             raise TypeError
@@ -614,12 +611,11 @@ class Consistency(Type):
     Consistency type
     """
 
-
     def check(self, value):
         if value is not pyrakoon.consistency.CONSISTENT \
-            and value is not pyrakoon.consistency.INCONSISTENT \
-            and value is not None \
-            and not isinstance(value, pyrakoon.consistency.AtLeast):
+                and value is not pyrakoon.consistency.INCONSISTENT \
+                and value is not None \
+                and not isinstance(value, pyrakoon.consistency.AtLeast):
             raise ValueError('Invalid `consistency` value')
 
         def serialize(self, value):
@@ -664,13 +660,14 @@ class Consistency(Type):
         else:
             raise ValueError('Unknown consistency tag \'%d\'' % request.value)
 
+
 # Instances
 STRING = String()
 
 UINT32 = UnsignedInteger(32, '<I')
 UINT64 = UnsignedInteger(64, '<Q')
 
-INT8  = SignedInteger(8, '<b')
+INT8 = SignedInteger(8, '<b')
 INT32 = SignedInteger(32, '<i')
 INT64 = SignedInteger(64, '<q')
 

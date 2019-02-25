@@ -18,10 +18,7 @@
 Arakoon protocol implementation
 """
 
-import struct
 import inspect
-import operator
-import itertools
 
 try:
     import cStringIO as StringIO
@@ -30,8 +27,13 @@ except ImportError:
 
 # Backward compatibility
 from .communication import Result, Request, RESULT_SUCCESS, PROTOCOL_VERSION
-from .types import CONSISTENCY_ARG, STRING, UINT32
-from .messages import Message
+from .types import Type, String, UnsignedInteger, SignedInteger, Float, Bool, Unit, Step, Option, List, Array, Product,\
+    NamedField, StatisticsType, Consistency,\
+    STRING, UINT32, UINT64, INT8, INT32, INT64, FLOAT, BOOL, UNIT, STEP, STATISTICS, CONSISTENCY, CONSISTENCY_ARG
+from .messages import Message,\
+    Get, Set, Delete, TestAndSet, Sequence, Confirm, DeletePrefix, Replace,\
+    Exists, Assert, AssertExists,\
+    Hello, WhoMaster, ExpectProgressPossible, Statistics, Version, Nop, GetCurrentState, UserFunction, GetKeyCount, GetTxID
 
 
 def sanity_check():
@@ -54,19 +56,19 @@ def sanity_check():
                         assert '_consistency' in value.__slots__
 
 
+# @todo fix sanity check with new folder structure
 sanity_check()
 del sanity_check
 
 
 def build_prologue(cluster):
+    # type: (str) -> str
     """
     Return the string to send as prologue
-
     :param cluster: Name of the cluster to which a connection is made
-    :type cluster: :class:`str`
-
+    :type cluster: str
     :return: Prologue to send to the Arakoon server
-    :rtype: :class:`str`
+    :rtype: str
     """
 
-    return ''.join(itertools.chain(UINT32.serialize(Message.MASK), UINT32.serialize(PROTOCOL_VERSION), STRING.serialize(cluster)))
+    return ''.join((UINT32.serialize(Message.MASK), UINT32.serialize(PROTOCOL_VERSION), STRING.serialize(cluster)))
