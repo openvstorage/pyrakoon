@@ -14,10 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Utility functions for building client mixins'''
+"""
+Utility functions for building client mixins
+"""
 
 import functools
-from pyrakoon import protocol, utils
+from .. import protocol, utils
 
 
 def validate_types(specs, args):
@@ -32,10 +34,8 @@ def validate_types(specs, args):
     :raise TypeError: Type of an argument is invalid
     :raise ValueError: Value of an argument is invalid
     """
-
     for spec, arg in zip(specs, args):
         name, type_ = spec[:2]
-
         try:
             type_.check(arg)
         except TypeError:
@@ -45,27 +45,25 @@ def validate_types(specs, args):
 
 
 def call(message_type):
+    # type: (Type[protocol.Message]) -> callable
     """
     Expose a :class:`~pyrakoon.protocol.Message` as a method on a client
 
-    :note: If the client method has a `consistency` option (i.e.
-        :data:`pyrakoon.protocol.CONSISTENCY_ARG` is present in the :attr:`ARGS`
-        field of `message_type`), an `allow_dirty`  argument is added 
-        automatically, and both are moved to the back.
+    :note: If the client method has a `consistency` option (i.e. :data:`pyrakoon.protocol.CONSISTENCY_ARG` is present
+     in the :attr:`ARGS` field of `message_type`), an `allow_dirty`  argument is added automatically,
+     and both are moved to the back.
 
     :param message_type: Type of the message this method should call
-    :type message_type: :class:`type`
+    :type message_type: Type[protocol.Message]
 
-    :return: Method which wraps a call to an Arakoon server using given message
-        type
-    :rtype: `callable`
+    :return: Method which wraps a call to an Arakoon server using given message type
+    :rtype: callable
     """
 
     def wrapper(fun):
         """
         Decorator helper
         """
-
         has_consistency = False
 
         # Calculate argspec of final method
@@ -80,7 +78,7 @@ def call(message_type):
             elif len(arg) == 3:
                 argspec.append((arg[0], arg[2]))
             else:
-                raise ValueError
+                raise ValueError()
 
         if has_consistency:
             name, _, default = protocol.CONSISTENCY_ARG

@@ -13,9 +13,12 @@
 #
 # Open vStorage is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY of any kind.
-from pyrakoon.consistency import Consistency
+
+from __future__ import absolute_import
+
 from ..communication import Request, Result, RESULT_SUCCESS
 from ..types import STRING, UINT32, CONSISTENCY_ARG, List, Option, BOOL, INT32
+from ...consistency import Consistency
 
 
 class Message(object):

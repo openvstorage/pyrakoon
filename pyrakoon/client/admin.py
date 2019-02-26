@@ -18,8 +18,9 @@
 Administrative client interface
 """
 
-from pyrakoon.client import utils
-from pyrakoon.protocol import admin
+from __future__ import absolute_import
+from . import utils
+from ..protocol import admin
 
 
 class ClientMixin(object):

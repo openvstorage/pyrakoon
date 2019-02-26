@@ -58,7 +58,8 @@ class AtLeast(Consistency):
     def __init__(self, i):
         """
         Create an 'at least' consistency policy definition
-        :param i: Minimal required `i` value
+        :param i: Minimal required `i` value. I representing the Paxos value.
+        Guarantee that the value retrieved is at least on the 'i' value
         :type i: `int`
         """
         self._i = i
@@ -81,6 +82,6 @@ CONSISTENT = Consistent()
 # The `INCONSISTENT` consistency policy
 INCONSISTENT = Inconsistent()
 
-# Removal of the classes. I don't know why though
+# Removal of the classes. I don't know why though. Supposedly to only have one instance of it laying around
 del Consistent
 del Inconsistent

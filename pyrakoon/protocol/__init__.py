@@ -35,7 +35,8 @@ from .types import Type, String, UnsignedInteger, SignedInteger, Float, Bool, Un
 from .messages import Message,\
     Get, Set, Delete, TestAndSet, Sequence, Confirm, DeletePrefix, Replace,\
     Exists, Assert, AssertExists,\
-    Hello, WhoMaster, ExpectProgressPossible, Statistics, Version, Nop, GetCurrentState, UserFunction, GetKeyCount, GetTxID
+    Hello, WhoMaster, ExpectProgressPossible, Statistics, Version, Nop, GetCurrentState, UserFunction, GetKeyCount, GetTxID,\
+    PrefixKeys, MultiGet, MultiGetOption, RevRangeEntries, Range, RangeEntries
 
 
 def sanity_check():
