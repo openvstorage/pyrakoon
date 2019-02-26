@@ -171,7 +171,8 @@ class Sequence(Message):
     ''')
 
     def __init__(self, steps, sync):
-        from pyrakoon import sequence
+        # Circular dependency
+        from ... import sequence
 
         super(Sequence, self).__init__()
 

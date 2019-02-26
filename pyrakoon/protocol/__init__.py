@@ -21,7 +21,7 @@ Arakoon protocol implementation
 from __future__ import absolute_import
 
 import inspect
-
+import itertools
 try:
     import cStringIO as StringIO
 except ImportError:
@@ -74,4 +74,5 @@ def build_prologue(cluster):
     :rtype: str
     """
 
-    return ''.join((UINT32.serialize(Message.MASK), UINT32.serialize(PROTOCOL_VERSION), STRING.serialize(cluster)))
+    return ''.join(itertools.chain(UINT32.serialize(Message.MASK),
+                                   UINT32.serialize(PROTOCOL_VERSION), STRING.serialize(cluster)))

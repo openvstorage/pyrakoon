@@ -22,120 +22,119 @@ from .utils import call
 from .. import errors, protocol, utils
 
 
-class ClientMixin(object):  # pylint: disable=W0232,R0904,old-style-class
+class ClientMixin(object):
     """
     Mixin providing client actions for standard cluster functionality
 
     This can be mixed into any class implementing :class:`AbstractClient`.
     """
 
-    # pylint: disable=C0111
     @call(protocol.Hello)
-    def hello(self):  # pylint: disable=R0201
+    def hello(self):
         assert False
 
     @call(protocol.Exists)
-    def exists(self):  # pylint: disable=R0201
+    def exists(self):
         assert False
 
     @call(protocol.WhoMaster)
-    def who_master(self):  # pylint: disable=R0201
+    def who_master(self):
         assert False
 
     @call(protocol.Get)
-    def get(self):  # pylint: disable=R0201
+    def get(self):
         assert False
 
     @call(protocol.Set)
-    def set(self):  # pylint: disable=R0201
+    def set(self):
         assert False
 
     @call(protocol.Delete)
-    def delete(self):  # pylint: disable=R0201
+    def delete(self):
         assert False
 
     @call(protocol.PrefixKeys)
-    def prefix(self):  # pylint: disable=R0201
+    def prefix(self):
         assert False
 
     @call(protocol.TestAndSet)
-    def test_and_set(self):  # pylint: disable=R0201
+    def test_and_set(self):
         assert False
 
     @call(protocol.Sequence)
-    def sequence(self):  # pylint: disable=R0201
+    def sequence(self):
         assert False
 
     @call(protocol.Range)
-    def range(self):  # pylint: disable=R0201
+    def range(self):
         assert False
 
     @call(protocol.RangeEntries)
-    def range_entries(self):  # pylint: disable=R0201
+    def range_entries(self):
         assert False
 
     @call(protocol.MultiGet)
-    def multi_get(self):  # pylint: disable=R0201
+    def multi_get(self):
         assert False
 
     @call(protocol.MultiGetOption)
-    def multi_get_option(self):  # pylint: disable=R0201
+    def multi_get_option(self):
         assert False
 
     @call(protocol.ExpectProgressPossible)
-    def expect_progress_possible(self):  # pylint: disable=R0201
+    def expect_progress_possible(self):
         assert False
 
     @call(protocol.GetKeyCount)
-    def get_key_count(self):  # pylint: disable=R0201
+    def get_key_count(self):
         assert False
 
     @call(protocol.UserFunction)
-    def user_function(self):  # pylint: disable=R0201
+    def user_function(self):
         assert False
 
     @call(protocol.Confirm)
-    def confirm(self):  # pylint: disable=R0201
+    def confirm(self):
         assert False
 
     @call(protocol.Assert)
-    def assert_(self):  # pylint: disable=R0201
+    def assert_(self):
         assert False
 
     @call(protocol.RevRangeEntries)
-    def rev_range_entries(self):  # pylint: disable=R0201
+    def rev_range_entries(self):
         assert False
 
     @call(protocol.Statistics)
-    def statistics(self):  # pylint: disable=R0201
+    def statistics(self):
         assert False
 
     @call(protocol.Version)
-    def version(self):  # pylint: disable=R0201
+    def version(self):
         assert False
 
     @call(protocol.AssertExists)
-    def assert_exists(self):  # pylint: disable=R0201
+    def assert_exists(self):
         assert False
 
     @call(protocol.DeletePrefix)
-    def delete_prefix(self):  # pylint: disable=R0201
+    def delete_prefix(self):
         assert False
 
     @call(protocol.Replace)
-    def replace(self):  # pylint: disable=R0201
+    def replace(self):
         assert False
 
     @call(protocol.Nop)
-    def nop(self):  # pylint: disable=R0201
+    def nop(self):
         assert False
 
     @call(protocol.GetCurrentState)
-    def get_current_state(self):  # pylint: disable=R0201
+    def get_current_state(self):
         assert False
 
     @call(protocol.GetTxID)
-    def get_tx_id(self):  # pylint: disable=R0201
+    def get_tx_id(self):
         assert False
 
     __getitem__ = get
@@ -150,7 +149,7 @@ class NotConnectedError(RuntimeError):
     """
 
 
-class AbstractClient(object):  # pylint: disable=W0232,R0903,R0922,old-style-class
+class AbstractClient(object):
     """
     Abstract base class for implementations of Arakoon clients
     """

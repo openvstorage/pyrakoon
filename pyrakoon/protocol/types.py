@@ -22,8 +22,8 @@ try:
 except ImportError:
     import StringIO
 from .communication import Request, Result
-from pyrakoon import utils
-import pyrakoon.consistency
+from .. import utils
+from .. import consistency
 
 
 class Type(object):
@@ -118,7 +118,7 @@ class String(Type):
             request = length_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         length = request.value
 
@@ -199,7 +199,7 @@ class Float(Type):
 
     def check(self, value):
         if not isinstance(value, float):
-            raise TypeError
+            raise TypeError()
 
 
 class Bool(Type):
@@ -264,7 +264,8 @@ class Step(Type):
     """
 
     def check(self, value):
-        from pyrakoon import sequence
+        # Circular dependency
+        from .. import sequence
 
         if not isinstance(value, sequence.Step):
             raise TypeError
@@ -320,7 +321,7 @@ class Option(Type):
             request = has_value_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         has_value = request.value
 
@@ -335,7 +336,7 @@ class Option(Type):
                 request = receiver.send(value)
 
             if not isinstance(request, Result):
-                raise TypeError
+                raise TypeError()
 
             yield Result(request.value)
 
@@ -352,7 +353,7 @@ class List(Type):
     def check(self, value):
         # Get rid of the usual suspects
         if isinstance(value, (str, unicode, )):
-            raise TypeError
+            raise TypeError()
 
         values = tuple(value)
 
@@ -378,7 +379,7 @@ class List(Type):
             request = count_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         count = request.value
 
@@ -392,7 +393,7 @@ class List(Type):
                 request = receiver.send(value)
 
             if not isinstance(request, Result):
-                raise TypeError
+                raise TypeError()
 
             value = request.value
 
@@ -428,7 +429,7 @@ class Array(Type):
             request = count_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         count = request.value
 
@@ -442,7 +443,7 @@ class Array(Type):
                 request = receiver.send(value)
 
             if not isinstance(request, Result):
-                raise TypeError
+                raise TypeError()
 
             value = request.value
 
@@ -466,12 +467,12 @@ class Product(Type):
     def check(self, value):
         # Get rid of the usual suspects
         if isinstance(value, (str, unicode, )):
-            raise TypeError
+            raise TypeError()
 
         values = tuple(value)
 
         if len(values) != len(self._inner_types):
-            raise ValueError
+            raise ValueError()
 
         for type_, value_ in zip(self._inner_types, values):
             type_.check(value_)
@@ -495,7 +496,7 @@ class Product(Type):
                 request = receiver.send(value)
 
             if not isinstance(request, Result):
-                raise TypeError
+                raise TypeError()
 
             value = request.value
             values.append(value)
@@ -530,7 +531,7 @@ class NamedField(Type):
             request = type_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         type_ = request.value
 
@@ -542,7 +543,7 @@ class NamedField(Type):
             request = name_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         name = request.value
 
@@ -566,7 +567,7 @@ class NamedField(Type):
             request = value_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         value = request.value
 
@@ -598,7 +599,7 @@ class StatisticsType(Type):
             request = buffer_receiver.send(value)
 
         if not isinstance(request, Result):
-            raise TypeError
+            raise TypeError()
 
         read = StringIO.StringIO(request.value).read
         result = utils.read_blocking(NamedField.receive(), read)
@@ -615,23 +616,23 @@ class Consistency(Type):
     """
 
     def check(self, value):
-        if value is not pyrakoon.consistency.CONSISTENT \
-                and value is not pyrakoon.consistency.INCONSISTENT \
+        if value is not consistency.CONSISTENT \
+                and value is not consistency.INCONSISTENT \
                 and value is not None \
-                and not isinstance(value, pyrakoon.consistency.AtLeast):
+                and not isinstance(value, consistency.AtLeast):
             raise ValueError('Invalid `consistency` value')
 
-        def serialize(self, value):
-            if value is pyrakoon.consistency.CONSISTENT or value is None:
-                yield '\0'
-            elif value is pyrakoon.consistency.INCONSISTENT:
-                yield '\1'
-            elif isinstance(value, pyrakoon.consistency.AtLeast):
-                yield '\2'
-                for data in INT64.serialize(value.i):
-                    yield data
-            else:
-                raise ValueError
+    def serialize(self, value):
+        if value is consistency.CONSISTENT or value is None:
+            yield '\0'
+        elif value is consistency.INCONSISTENT:
+            yield '\1'
+        elif isinstance(value, consistency.AtLeast):
+            yield '\2'
+            for data in INT64.serialize(value.i):
+                yield data
+        else:
+            raise ValueError()
 
     def receive(self):
         tag_receiver = INT8.receive()
@@ -645,9 +646,9 @@ class Consistency(Type):
             raise TypeError
 
         if request.value == 0:
-            yield Result(pyrakoon.consistency.CONSISTENT)
+            yield Result(consistency.CONSISTENT)
         elif request.value == 1:
-            yield Result(pyrakoon.consistency.INCONSISTENT)
+            yield Result(consistency.INCONSISTENT)
         elif request.value == 2:
             i_receiver = INT64.receive()
             request = i_receiver.next()
@@ -657,9 +658,9 @@ class Consistency(Type):
                 request = i_receiver.send(value)
 
             if not isinstance(request, Result):
-                raise TypeError
+                raise TypeError()
 
-            yield Result(pyrakoon.consistency.AtLeast(request.value))
+            yield Result(consistency.AtLeast(request.value))
         else:
             raise ValueError('Unknown consistency tag \'%d\'' % request.value)
 

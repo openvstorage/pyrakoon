@@ -82,8 +82,8 @@ class Message(object):
 
         :see: :func:`pyrakoon.utils.process_blocking`
         """
-
-        from pyrakoon import errors
+        # Circular dependency
+        from ... import errors
 
         code_receiver = UINT32.receive()
         request = code_receiver.next()

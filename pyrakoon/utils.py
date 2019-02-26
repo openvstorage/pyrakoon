@@ -14,20 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Utility functions'''
+"""
+Utility functions
+"""
+
+from __future__ import absolute_import
 
 import __builtin__
 import uuid
 import logging
 import functools
 import itertools
+from .constants.logging import PYRAKOON_UTILS_LOGGER
 
-LOGGER = logging.getLogger(__name__)
-'''Logger for code in this module''' #pylint: disable=W0105
+logger = logging.getLogger(PYRAKOON_UTILS_LOGGER)
 
 
-def update_argspec(*argnames): #pylint: disable=R0912
-    '''Wrap a callable to use real argument names
+def update_argspec(*argnames):
+    """
+    Wrap a callable to use real argument names
 
     When generating functions at runtime, one often needs to fall back to
     ``*args`` and ``**kwargs`` usage. Using these features require
@@ -95,11 +100,9 @@ def update_argspec(*argnames): #pylint: disable=R0912
 
     :param argnames: Names of the arguments to be used
     :type argnames: iterable of :class:`str` or `(str, object)`
-
-    :return: Decorator which wraps a given callable into one with a correct
-        argspec
-    :rtype: `callable`
-    '''
+    :return: Decorator which wraps a given callable into one with a correct argspec
+    :rtype: callable
+    """
 
     argnames_ = tuple(itertools.chain(argnames, ('', )))
 
@@ -230,7 +233,8 @@ def format_doc(doc):
 
 
 def kill_coroutine(coroutine, log_fun=None):
-    '''Kill a coroutine by injecting :exc:`StopIteration`
+    """
+    Kill a coroutine by injecting :exc:`StopIteration`
 
     If the coroutine has exited already, we ignore any errors.
 
@@ -272,20 +276,21 @@ def kill_coroutine(coroutine, log_fun=None):
     :type coroutine: `generator`
     :param log_fun: Function to call when an exception is encountered
     :type log_fun: `callable`
-    '''
+    """
 
     try:
         coroutine.close()
-    except: #pylint: disable=W0702
+    except Exception:
         try:
             if log_fun:
                 log_fun('Failure while killing coroutine')
-        except: #pylint: disable=W0702
+        except Exception:
             pass
 
 
 def process_blocking(message, stream):
-    '''Process a message using a blocking stream API
+    """
+    Process a message using a blocking stream API
 
     The given `message` will be serialized and written to the stream. Once the
     message was written, the result will be read using :func:`read_blocking`.
@@ -304,7 +309,7 @@ def process_blocking(message, stream):
     :see: :meth:`pyrakoon.client.AbstractClient._process`
     :see: :meth:`pyrakoon.protocol.Message.serialize`
     :see: :meth:`pyrakoon.protocol.Message.receive`
-    '''
+    """
 
     for bytes_ in message.serialize():
         stream.write(bytes_)
@@ -313,7 +318,8 @@ def process_blocking(message, stream):
 
 
 def read_blocking(receiver, read_fun):
-    '''Process message result parsing using a blocking stream read function
+    """
+    Process message result parsing using a blocking stream read function
 
     Given a function to read a given amount of bytes from a result channel,
     this function handles the interaction with the parsing coroutine of a
@@ -332,9 +338,9 @@ def read_blocking(receiver, read_fun):
         Coroutine didn't return a :class:`~pyrakoon.protocol.Result`
 
     :see: :meth:`pyrakoon.protocol.Message.receive`
-    '''
-
-    from pyrakoon import protocol
+    """
+    # Circular dependency
+    from . import protocol
 
     request = receiver.next()
 
@@ -345,6 +351,6 @@ def read_blocking(receiver, read_fun):
     if not isinstance(request, protocol.Result):
         raise TypeError
 
-    kill_coroutine(receiver, LOGGER.exception)
+    kill_coroutine(receiver, logger.exception)
 
     return request.value

@@ -19,6 +19,7 @@ Utility functions for building client mixins
 """
 
 import functools
+from .errors import NotConnectedError
 from .. import protocol, utils
 
 
@@ -90,8 +91,7 @@ def call(message_type):
             self = kwargs['self']
 
             if not self.connected:
-                from pyrakoon import client
-                raise client.NotConnectedError('Not connected')
+                raise NotConnectedError('Not connected')
 
             args = tuple(kwargs[arg[0]] for arg in message_type.ARGS)
             validate_types(message_type.ARGS, args)

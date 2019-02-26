@@ -21,5 +21,5 @@ Arakoon client interface
 from __future__ import absolute_import
 
 # Backwards compatibility
-from .interfaces import AbstractClient, SocketClient
+from .interfaces import AbstractClient, SocketClient, ClientMixin
 from .errors import NotConnectedError
