@@ -19,7 +19,9 @@ Testing messages module
 Contains various message to test values on the Arakoon
 """
 
-from pyrakoon import utils
+from __future__ import absolute_import
+
+from ... import utils
 from .base import Message, KeyConsistencyMessage, KeyValueConsistencyMessage
 from ..types import Option, STRING, BOOL, UNIT, CONSISTENCY_ARG
 

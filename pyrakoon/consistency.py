@@ -19,52 +19,68 @@
 # GNU Affero General Public License along with this program (file "COPYING").
 # If not, see <http://www.gnu.org/licenses/>.
 
-'''Client request result consistency definitions'''
-
-import operator
-
-class Consistency(object): #pylint: disable=R0903
-    '''Abstract base class for consistency definition types'''
+"""
+Client request result consistency definitions
+"""
 
 
-class Consistent(Consistency): #pylint: disable=R0903
-    '''Representation of the 'Consistent' consistency policy'''
+class Consistency(object):
+    """
+    Abstract base class for consistency definition types
+    """
+
+
+class Consistent(Consistency):
+    """
+    Representation of the 'Consistent' consistency policy
+    """
 
     def __repr__(self):
         return 'CONSISTENT'
 
-CONSISTENT = Consistent()
-'''The `CONSISTENT` consistency policy''' #pylint: disable=W0105
-del Consistent
 
-
-class Inconsistent(Consistency): #pylint: disable=R0903
-    '''Representation of the 'Inconsistent' consistency policy'''
+class Inconsistent(Consistency):
+    """
+    Representation of the 'Inconsistent' consistency policy
+    """
 
     def __repr__(self):
         return 'INCONSISTENT'
 
-INCONSISTENT = Inconsistent()
-'''The `INCONSISTENT` consistency policy''' #pylint: disable=W0105
-del Inconsistent
 
-
-class AtLeast(Consistency): #pylint: disable=R0903
-    '''Representation of an 'at least' consistency policy'''
+class AtLeast(Consistency):
+    """
+    Representation of an 'at least' consistency policy
+    """
 
     __slots__ = '_i',
 
     def __init__(self, i):
-        '''Create an 'at least' consistency policy definition
-
+        """
+        Create an 'at least' consistency policy definition
         :param i: Minimal required `i` value
         :type i: `int`
-        '''
-
-        self._i = i #pylint: disable=C0103
+        """
+        self._i = i
 
     def __repr__(self):
         return 'AtLeast(%d)' % self.i
 
-    i = property(operator.attrgetter('_i'), doc='Minimal \'i\'')
+    @property
+    def i(self):
+        """
+        Minimal \'i\'
+        :return:
+        """
+        return self._i
 
+
+# Instances
+# The `CONSISTENT` consistency policy
+CONSISTENT = Consistent()
+# The `INCONSISTENT` consistency policy
+INCONSISTENT = Inconsistent()
+
+# Removal of the classes. I don't know why though
+del Consistent
+del Inconsistent

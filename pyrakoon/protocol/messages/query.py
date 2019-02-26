@@ -19,7 +19,9 @@ Query messages module
 Contains messages to query the Arakoon
 """
 
-from pyrakoon import utils
+from __future__ import absolute_import
+
+from ... import utils
 from .base import Message, KeysConsistencyMessage, RangeMessage
 from ..types import Array, Option, List, Product, STRING, INT32, CONSISTENCY_ARG
 

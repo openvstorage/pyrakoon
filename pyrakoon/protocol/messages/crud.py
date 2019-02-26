@@ -19,7 +19,9 @@ Crud message module
 Contains messages to perform CRUD operations
 """
 
-from pyrakoon import utils
+from __future__ import absolute_import
+
+from ... import utils
 from .base import Message, KeyMessage, KeyConsistencyMessage, KeyValueMessage
 from ..types import Option, List, STRING, UINT32, BOOL, UNIT, STEP
 

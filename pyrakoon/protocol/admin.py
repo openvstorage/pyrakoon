@@ -18,8 +18,11 @@
 Arakoon administrative call implementations
 """
 
+from __future__ import absolute_import
+
+
 import operator
-from pyrakoon import errors, protocol, utils
+from .. import errors, protocol, utils
 
 
 class OptimizeDB(protocol.Message):

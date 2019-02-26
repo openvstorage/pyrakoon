@@ -14,9 +14,21 @@
 # Open vStorage is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY of any kind.
 
-from __future__ import absolute_import
+"""
+Base error module
+"""
 
-from .base import Message
-from .crud import Get, Set, Delete, TestAndSet, Sequence, Confirm, DeletePrefix, Replace
-from .testing import Exists, Assert, AssertExists
-from .misc import Hello, WhoMaster, ExpectProgressPossible, Statistics, Version, Nop, GetCurrentState, UserFunction, GetKeyCount, GetTxID
+
+class ArakoonError(Exception):
+    """
+    Base type for all Arakoon client errors
+    """
+    # Error code sent by the Arakoon server
+    CODE = None
+
+
+class UnknownFailure(ArakoonError):
+    """
+    Unknown failure
+    """
+    CODE = 0x00ff

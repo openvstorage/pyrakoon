@@ -19,7 +19,9 @@ Misc message module
 Contains varias messages used to contact the Arakoon
 """
 
-from pyrakoon import utils
+from __future__ import absolute_import
+
+from ... import utils
 from .base import Message
 from ..types import Option, Product, STRING, UINT64, INT32, BOOL, UNIT, STATISTICS, CONSISTENCY
 
