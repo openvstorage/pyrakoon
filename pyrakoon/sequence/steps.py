@@ -219,3 +219,31 @@ class Replace(Step):
         :rtype: Union[str, None]
         """
         return self._wanted
+
+
+class DeletePrefix(Step):
+    """
+    "DeletePrefix" operation
+    """
+
+    TAG = 14
+    ARGS = ('prefix', protocol.STRING),
+
+    def __init__(self, prefix):
+        # type: (str) -> None
+        """
+        :param prefix: Prefix to delete
+        :type prefix: str
+        """
+        super(DeletePrefix, self).__init__(prefix)
+
+        self._prefix = prefix
+
+    @property
+    def prefix(self):
+        # type: () -> str
+        """
+        Prefix to delete
+        :return:
+        """
+        return self._prefix
