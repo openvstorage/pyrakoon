@@ -14,14 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Arakoon administrative call implementations'''
+"""
+Arakoon administrative call implementations
+"""
+
+from __future__ import absolute_import
+
 
 import operator
+from .. import errors, protocol, utils
 
-from pyrakoon import errors, protocol, utils
 
 class OptimizeDB(protocol.Message):
-    '''"optimize_db" message'''
+    """
+    "optimize_db" message
+    """
 
     __slots__ = ()
 
@@ -40,7 +47,9 @@ class OptimizeDB(protocol.Message):
 
 
 class DefragDB(protocol.Message):
-    '''"defrag_db" message'''
+    """
+    "defrag_db" message
+    """
 
     __slots__ = ()
 
@@ -59,7 +68,9 @@ class DefragDB(protocol.Message):
 
 
 class DropMaster(protocol.Message):
-    '''"drop_master" message'''
+    """"
+    "drop_master" message
+    """
 
     __slots__ = ()
 
@@ -79,7 +90,9 @@ class DropMaster(protocol.Message):
 
 
 class CollapseTlogs(protocol.Message):
-    '''"collapse_tlogs" message'''
+    """
+    "collapse_tlogs" message
+    """
 
     __slots__ = '_count',
 
@@ -106,8 +119,8 @@ class CollapseTlogs(protocol.Message):
 
     count = property(operator.attrgetter('_count'))
 
-    def receive(self): #pylint: disable=R0912
-        self.RETURN_TYPE = protocol.INT32 #pylint: disable=C0103
+    def receive(self):
+        self.RETURN_TYPE = protocol.INT32
 
         count_receiver = protocol.Message.receive(self)
         request = count_receiver.next()
@@ -173,7 +186,9 @@ class CollapseTlogs(protocol.Message):
 
 
 class FlushStore(protocol.Message):
-    '''"flush_store" message'''
+    """"
+    flush_store" message
+    """
 
     __slots__ = ()
 
