@@ -12,7 +12,7 @@ class ArakoonException(Exception):
         if self._msg is not None and msg == '':
             msg = self._msg
 
-        super(ArakoonException, self).__init__(self, msg)
+        super(ArakoonException, self).__init__(msg)
 
 
 class ArakoonNotFound(ArakoonException, KeyError):
@@ -95,8 +95,9 @@ class ArakoonInvalidArguments(ArakoonException, TypeError):
         msg = fun_name
         if invalid_args:
             error_string = ', '.join('%s=%s' % arg for arg in invalid_args)
-            msg, self._msg = ArakoonInvalidArguments._msgF % (fun_name, error_string)
-            ArakoonException.__init__(self, self._msg)
+            self._msg = ArakoonInvalidArguments._msgF % (fun_name, error_string)
+            super(ArakoonInvalidArguments, self).__init__(self._msg)
+            return
 
         super(ArakoonInvalidArguments, self).__init__(msg)
 
