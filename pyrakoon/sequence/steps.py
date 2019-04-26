@@ -9,7 +9,7 @@ Contains all steps a sequence can make
 from __future__ import absolute_import
 
 from .. import protocol
-
+from abc import ABCMeta, abstractmethod
 
 class Step(object):
     """
@@ -234,3 +234,45 @@ class DeletePrefix(Step):
         :return:
         """
         return self._prefix
+
+class RangeAssertion:
+    __metaclass__ = ABCMeta
+
+    def write(self, fob):
+        raise NotImplementedError()
+
+class ContainsExactly(RangeAssertion):
+    def __init__(self, keys):
+        self._keys = keys
+
+    def write(self, fob):
+        fob.write(_packInt(1))
+        fob.write(_packInt(len(self._keys)))
+        for s in self._keys:
+            fob.write(_packString(s))
+
+
+class AssertRange(Step):
+
+    TAG = 17
+    ARGS = ('prefix', protocol.STRING), ('rangeAssertion', protocol.RANGE_ASSERTION)
+
+    def __init__(self, prefix, rangeAssertion):
+        """
+        :param prefix: prefix to assert upon
+        :type prefix: str
+        :param rangeAssertion: assertion for that prefix
+        :type wanted: RangeAssertion
+        """
+        super(AssertRange, self).__init__(prefix, rangeAssertion)
+
+        self._prefix = prefix
+        self._rangeAssertion = rangeAssertion
+
+    @property
+    def prefix(self):
+        return self._prefix
+
+    @property
+    def rangeAssertion(self):
+        return self._rangeAssertion

@@ -95,3 +95,5 @@ class AssertExists(KeyConsistencyMessage):
 
     def __init__(self, consistency, key):
         super(AssertExists, self).__init__(consistency, key)
+
+
