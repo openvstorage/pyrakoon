@@ -242,7 +242,9 @@ class RangeAssertion:
         raise NotImplementedError()
 
 class ContainsExactly(RangeAssertion):
-    def __init__(self, keys):
+    def __init__(self,
+                 keys # type: List(str)
+    ):
         self._keys = keys
 
     def write(self, fob):
@@ -257,13 +259,10 @@ class AssertRange(Step):
     TAG = 17
     ARGS = ('prefix', protocol.STRING), ('rangeAssertion', protocol.RANGE_ASSERTION)
 
-    def __init__(self, prefix, rangeAssertion):
-        """
-        :param prefix: prefix to assert upon
-        :type prefix: str
-        :param rangeAssertion: assertion for that prefix
-        :type wanted: RangeAssertion
-        """
+    def __init__(self,
+                 prefix, # type: str
+                 rangeAssertion # type: RangeAssertion
+    ):
         super(AssertRange, self).__init__(prefix, rangeAssertion)
 
         self._prefix = prefix
