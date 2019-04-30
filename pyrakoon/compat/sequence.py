@@ -2,7 +2,7 @@
 # This file is part of Open vStorage. For license information, see <LICENSE.txt>
 from .. import utils
 from .utils import validate_signature as _validate_signature
-
+from abc import ABCMeta, abstractmethod
 
 class Update(object):
     def write(self, fob):
@@ -41,6 +41,17 @@ class Replace(Update):
         self._key = key
         self._wanted = wanted
 
+class RangeAssertion:
+    __metaclass__ = ABCMeta
+
+class ContainsExactly(RangeAssertion):
+    def __init__(self, keys):
+        self._keys = keys
+
+class AssertRange(Update):
+    def __init__(self, prefix, rangeAssertion):
+        self._prefix = prefix
+        self._rangeAssertion = rangeAssertion
 
 class Sequence(Update):
     def __init__(self):
@@ -76,3 +87,7 @@ class Sequence(Update):
     @_validate_signature('string', 'string_option')
     def addReplace(self, key, wanted):
         self._updates.append(Replace(key, wanted))
+
+    def addAssertPrefixContainsExactly(self, prefix, keys):
+        ar = AssertRange(prefix, ContainsExactly(keys))
+        self.addUpdate(ar)

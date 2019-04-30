@@ -18,7 +18,7 @@ except ImportError:
 from .communication import Result, Request, RESULT_SUCCESS, PROTOCOL_VERSION
 from .types import Type, String, UnsignedInteger, SignedInteger, Float, Bool, Unit, Step, Option, List, Array, Product,\
     NamedField, StatisticsType, Consistency,\
-    STRING, UINT32, UINT64, INT8, INT32, INT64, FLOAT, BOOL, UNIT, STEP, STATISTICS, CONSISTENCY, CONSISTENCY_ARG
+    STRING, UINT32, UINT64, INT8, INT32, INT64, FLOAT, BOOL, UNIT, STEP, STATISTICS, CONSISTENCY, CONSISTENCY_ARG, RANGE_ASSERTION
 from .messages import Message,\
     Get, Set, Delete, TestAndSet, Sequence, Confirm, DeletePrefix, Replace,\
     Exists, Assert, AssertExists,\

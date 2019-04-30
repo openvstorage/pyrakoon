@@ -13,7 +13,7 @@ import logging
 from .socket import ArakoonSocketClient
 from ..consistency import Consistency, Consistent, NoGuarantee, AtLeast
 from ..utils import convert_exceptions as _convert_exceptions, validate_signature as _validate_signature
-from ..sequence import Set, Delete, DeletePrefix, Assert, AssertExists, Replace, Sequence
+from ..sequence import Set, Delete, DeletePrefix, Assert, AssertExists, Replace, Sequence, AssertRange
 from ..errors import ArakoonException
 from ... import utils, consistency, sequence, protocol
 from ...constants.logging import PYRAKOON_COMPAT_LOGGER
@@ -160,6 +160,9 @@ class ArakoonClient(object):
         def convert_replace(step):
             return sequence.Replace(step._key, step._wanted)
 
+        def convert_assert_range(step):
+            return sequence.AssertRange(step._prefix, step._rangeAssertion)
+
         def convert_sequence(sequence_):
             steps = []
 
@@ -178,6 +181,8 @@ class ArakoonClient(object):
                     steps.append(convert_sequence(step))
                 elif isinstance(step, Replace):
                     steps.append(convert_replace(step))
+                elif isinstance(step, AssertRange):
+                    steps.append(convert_assert_range(step))
                 else:
                     raise TypeError
 

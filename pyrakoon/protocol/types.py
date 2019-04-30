@@ -596,6 +596,24 @@ class StatisticsType(Type):
 
         yield Result(result['arakoon_stats'])
 
+class RangeAssertionType(Type):
+    def check(self, value):
+        pass #TODO
+
+    def serialize(self, value):
+        for bytes_ in INT32.serialize(1):
+            yield bytes_
+
+        keys = value._keys
+        n_keys = len(keys)
+
+        for bytes_ in INT32.serialize(n_keys):
+            yield bytes_
+
+        for k in keys:
+            for data in STRING.serialize(k):
+                yield data
+
 
 class Consistency(Type):
     """
@@ -676,3 +694,5 @@ CONSISTENCY = Consistency()
 
 # Well-known `consistency` argument
 CONSISTENCY_ARG = ('consistency', CONSISTENCY, None)
+
+RANGE_ASSERTION = RangeAssertionType()

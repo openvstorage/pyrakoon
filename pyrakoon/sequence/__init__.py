@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-from .steps import Step, Step, Set, Delete, Assert, AssertExists, Replace, DeletePrefix
+from .steps import Step, Step, Set, Delete, Assert, AssertExists, Replace, DeletePrefix, AssertRange
 from .. import protocol
 
 
