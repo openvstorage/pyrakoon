@@ -3,7 +3,7 @@
 
 import logging
 from .constants.logging import PYRAKOON_LOGGER
-from .__version__ import __version__
+from .__version__ import __version__, __version_tuple__
 from .__author__ import __author__
 from .__license__ import __license__
 

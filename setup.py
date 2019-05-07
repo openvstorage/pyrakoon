@@ -32,7 +32,6 @@ def get_version(package):
         hash_contents = hash_f.read()
     # Unable to use __version__ as it is computed. Compute it again
     version_numbers = re.search("__version_info__ = ([0-9]+(?:, ?[0-9]+)*)", contents).group(1)
-    # Retrieve the hash
     hash_content = re.search("__hash__ = .*['\"](.*)['\"]", hash_contents).group(1)
     return '.'.join(n.strip() for n in itertools.chain(version_numbers.split(','), [hash_content]))
 
@@ -62,7 +61,7 @@ DESCRIPTION = 'An alternative Python client for Arakoon'
 URL = 'https://github.com/openvstorage/pyrakoon'
 EMAIL = 'support@openvstorage.com'
 AUTHOR = get_author(PACKAGE_NAME)
-REQUIRES_PYTHON = '>=2.7.0,<=3.0'
+REQUIRES_PYTHON = '>=2.7, <3.0'
 VERSION = get_version(PACKAGE_NAME)
 LICENSE = get_license(PACKAGE_NAME)
 

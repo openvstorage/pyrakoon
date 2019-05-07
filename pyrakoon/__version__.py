@@ -7,4 +7,5 @@ from .__hash__ import __hash__
 __version_info__ = 0, 0, 1
 # Version with the added hash
 __version_full__ = __version_info__ + (__hash__,)
-__version__ = '.'.join(str(i) for i in __version_full__)
+__version_tuple__ = tuple(str(i) for i in __version_full__)
+__version__ = '.'.join(__version_tuple__)
