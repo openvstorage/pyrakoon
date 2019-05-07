@@ -3,17 +3,15 @@
 
 import logging
 from .constants.logging import PYRAKOON_LOGGER
+from .__version__ import __version__
+from .__author__ import __author__
+from .__license__ import __license__
 
 """
 pyrakoon, an Arakoon_ client for Python
 
 .. _Arakoon: http://www.arakoon.org
 """
-
-__version_info__ = 0, 0, 1
-__version__ = '.'.join(str(i) for i in __version_info__)
-__author__ = u'OpenvStorage'
-__license__ = u'LGPL2'
 
 __docformat__ = 'restructuredtext en'
 

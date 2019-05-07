@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# Copyright (C) iNuron - info@openvstorage.com
+# This file is part of Open vStorage. For license information, see <LICENSE.txt>
 
 import io
 import os
 import re
+import itertools
 from setuptools import find_packages, setup
 
 init_pys = {}
@@ -21,28 +24,35 @@ def read_init(package):
 
 def get_version(package):
     """
-    Return package version as listed in `__version__` in `init.py`.
+    Return package version as listed in `__version__.py`
     """
-    init_py = read_init(package)
+    with open(os.path.join(package, '__version__.py'), 'r') as version_f:
+        contents = version_f.read()
+    with open(os.path.join(package, '__hash__.py'), 'r') as hash_f:
+        hash_contents = hash_f.read()
     # Unable to use __version__ as it is computed. Compute it again
-    version_numbers = re.search("__version_info__ = ([0-9]+(?:, ?[0-9]+)*)", init_py).group(1)
-    return '.'.join(n.strip() for n in version_numbers.split(','))
+    version_numbers = re.search("__version_info__ = ([0-9]+(?:, ?[0-9]+)*)", contents).group(1)
+    # Retrieve the hash
+    hash_content = re.search("__hash__ = .*['\"](.*)['\"]", hash_contents).group(1)
+    return '.'.join(n.strip() for n in itertools.chain(version_numbers.split(','), [hash_content]))
 
 
 def get_author(package):
     """
-    Return package author as listed in `__author__` in `init.py`.
+    Return package author as listed in `__author__.py`
     """
-    init_py = read_init(package)
-    return re.search("__author__ = .*['\"](.*)['\"]", init_py).group(1)
+    with open(os.path.join(package, '__author__.py'), 'r') as author_f:
+        contents = author_f.read()
+    return re.search("__author__ = .*['\"](.*)['\"]", contents).group(1)
 
 
 def get_license(package):
     """
-    Return package license as listed in `__license` in `init.py`.
+    Return package license as listed in `__license__.py`
     """
-    init_py = read_init(package)
-    return re.search("__license__ = .*['\"](.*)['\"]", init_py).group(1)
+    with open(os.path.join(package, '__license__.py'), 'r') as license_f:
+        contents = license_f.read()
+    return re.search("__license__ = .*['\"](.*)['\"]", contents).group(1)
 
 
 # Package meta-data.
