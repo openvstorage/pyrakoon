@@ -13,8 +13,6 @@ def read_init(package):
     init_py = init_pys.get(package)
     if init_py is not None:
         return init_py
-    path = os.path.join(package, '__init__.py')
-    print path
     with open(os.path.join(package, '__init__.py'), 'r') as init_file:
         file_contents = init_file.read()
         init_pys[package] = file_contents
