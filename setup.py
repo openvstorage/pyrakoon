@@ -7,9 +7,21 @@ import io
 import os
 import re
 import itertools
+from subprocess import check_output
 from setuptools import find_packages, setup
+from setuptools.command.install import install
+
+
+class PyrakoonInstall(install):
+    def run(self):
+        # Setup the hash
+        set_hash(PACKAGE_NAME)
+        # Run the setuptools install
+        install.run(self)
+
 
 init_pys = {}
+hash_regex = "(__hash__ = .*['\"])(.*)(['\"])"
 
 
 def read_init(package):
@@ -22,6 +34,21 @@ def read_init(package):
         return file_contents
 
 
+def set_hash(package):
+    try:
+        commit_hash = check_output(['git', 'rev-parse', 'HEAD']).strip()
+        print 'Determined the hash to be {}'.format(commit_hash)
+        hash_file_path = os.path.join(package, '__hash__.py')
+        with open(hash_file_path, 'r') as hash_f:
+            contents = hash_f.read()
+        new_contents = re.sub(hash_regex, '\g<1>{}\g<3>'.format(commit_hash), contents)
+        with open(hash_file_path, 'w') as hash_f:
+            hash_f.write(new_contents)
+        print 'Written out the hash to __hash__.py'
+    except:
+        print 'Unable to set the hash'
+
+
 def get_version(package):
     """
     Return package version as listed in `__version__.py`
@@ -32,7 +59,7 @@ def get_version(package):
         hash_contents = hash_f.read()
     # Unable to use __version__ as it is computed. Compute it again
     version_numbers = re.search("__version_info__ = ([0-9]+(?:, ?[0-9]+)*)", contents).group(1)
-    hash_content = re.search("__hash__ = .*['\"](.*)['\"]", hash_contents).group(1)
+    hash_content = re.search(hash_regex, hash_contents).group(2)
     return '.'.join(n.strip() for n in itertools.chain(version_numbers.split(','), [hash_content]))
 
 
@@ -99,4 +126,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython',
     ],
+    cmdclass={
+        'install': PyrakoonInstall,
+    },
 )
