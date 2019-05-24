@@ -6,10 +6,18 @@
 import io
 import os
 import re
-import itertools
 from subprocess import check_output
 from setuptools import find_packages, setup
 from setuptools.command.install import install
+
+
+class Container(object):
+    """
+    Houses some variables
+    """
+    def __init__(self):
+        self.commit_hash = None
+        self.init_pys = {}
 
 
 class PyrakoonInstall(install):
@@ -20,33 +28,49 @@ class PyrakoonInstall(install):
         install.run(self)
 
 
-init_pys = {}
-hash_regex = "(__hash__ = .*['\"])(.*)(['\"])"
+CONTAINER = Container()
+HASH_REGEX = "(__hash__ = .*['\"])(.*)(['\"])"
 
 
 def read_init(package):
-    init_py = init_pys.get(package)
+    init_py = CONTAINER.init_pys.get(package)
     if init_py is not None:
         return init_py
     with open(os.path.join(package, '__init__.py'), 'r') as init_file:
         file_contents = init_file.read()
-        init_pys[package] = file_contents
+        CONTAINER.init_pys[package] = file_contents
         return file_contents
 
 
-def set_hash(package):
+def get_hash(package):
+    """
+    Retrieve the hash of the package
+    """
+    _ = package
     try:
-        commit_hash = check_output(['git', 'rev-parse', 'HEAD']).strip()
-        print 'Determined the hash to be {}'.format(commit_hash)
-        hash_file_path = os.path.join(package, '__hash__.py')
-        with open(hash_file_path, 'r') as hash_f:
-            contents = hash_f.read()
-        new_contents = re.sub(hash_regex, '\g<1>{}\g<3>'.format(commit_hash), contents)
-        with open(hash_file_path, 'w') as hash_f:
-            hash_f.write(new_contents)
-        print 'Written out the hash to __hash__.py'
+        CONTAINER.commit_hash = check_output(['git', 'rev-parse', 'HEAD']).strip()
     except:
-        print 'Unable to set the hash'
+        CONTAINER.commit_hash = ''
+        print 'Unable to get the hash'
+    return CONTAINER.commit_hash
+
+
+def set_hash(package):
+    """
+    Write the hash out the __hash__.py. Done during setup
+    """
+    package_hash = get_hash(package)
+    if package_hash is not None:
+        try:
+            hash_file_path = os.path.join(package, '__hash__.py')
+            with open(hash_file_path, 'r') as hash_f:
+                contents = hash_f.read()
+            new_contents = re.sub(HASH_REGEX, '\g<1>{}\g<3>'.format(package_hash), contents)
+            with open(hash_file_path, 'w') as hash_f:
+                hash_f.write(new_contents)
+            print 'Written out the hash to __hash__.py'
+        except:
+            print 'Unable to write the hash'
 
 
 def get_version(package):
@@ -59,8 +83,10 @@ def get_version(package):
         hash_contents = hash_f.read()
     # Unable to use __version__ as it is computed. Compute it again
     version_numbers = re.search("__version_info__ = ([0-9]+(?:, ?[0-9]+)*)", contents).group(1)
-    hash_content = re.search(hash_regex, hash_contents).group(2)
-    return '.'.join(n.strip() for n in itertools.chain(version_numbers.split(','), [hash_content]))
+    hash_content = re.search(HASH_REGEX, hash_contents).group(2)
+    if hash_content == 'None':
+        hash_content = str(get_hash(package))
+    return '{0}+{1}'.format('.'.join(n.strip() for n in version_numbers.split(',')), hash_content)
 
 
 def get_author(package):
