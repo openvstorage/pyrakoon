@@ -2,7 +2,7 @@
     "package_name": "pyrakoon",
     "product_name": "Pyrakoon",
     "tags": ["enterprise"],
-    "source_contents": "--transform 's,^,{0}-{1}/,' pyrakoon *.txt",
+    "source_contents": "--transform 's,^,{0}-{1}/,' pyrakoon CHANGELOG.txt LICENSE.txt",
     "version": {
         "major": 0,
         "minor": 1

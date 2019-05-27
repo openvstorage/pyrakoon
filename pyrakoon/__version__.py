@@ -4,7 +4,7 @@
 from .__hash__ import __hash__
 
 # Used by setup.py to compute the version
-__version_info__ = 0, 0, 1
+__version_info__ = 0, 1, 0
 # Version with the added hash
 __version_tuple__ = __version_info__ + (__hash__,)
 __version__ = '.'.join(str(i) for i in __version_tuple__)
