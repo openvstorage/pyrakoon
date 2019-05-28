@@ -1,0 +1,11 @@
+Source: pyrakoon
+Maintainer: OpenvStorage <support@openvstorage.com>
+Standards-Version: 3.9.4
+Section: python
+Priority: optional
+Build-Depends: python (>= 2.7.2), debhelper (>= 9)
+
+Package: pyrakoon
+Architecture: amd64
+Pre-Depends: python (>= 2.7.2)
+Description: An alternative Python client for Arakoon
